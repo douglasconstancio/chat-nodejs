@@ -30,4 +30,32 @@ export class ConnectionsService {
         return this.connectionsRepository.findOne({ user_id })
     }
 
+    async findAllWithoutAdmin() {
+        return this.connectionsRepository.find({
+            where: { admin_id: null },
+            relations: ['user']
+        })
+    }
+
+    async findBySocketId(socket_id: string) {
+        return this.connectionsRepository.findOne({ socket_id })
+    }
+
+    async updateAdminId(user_id: string, admin_id: string) {
+        await this.connectionsRepository
+            .createQueryBuilder()
+                .update(Connection)
+                .set({ admin_id })
+                .where('user_id = :user_id', { user_id })
+                .execute()
+    }
+
+    async deleteBySocketId(socket_id: string) {
+        await this.connectionsRepository
+            .createQueryBuilder()
+                .delete()
+                .where('socket_id = :socket_id', { socket_id })
+                .execute()
+    }
+
 }
